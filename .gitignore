@@ -11,7 +11,7 @@ target/
 logs/
 dbt_packages/
 .user.yml
-raw_data/
+data/
 
 # Python / OS
 __pycache__/
