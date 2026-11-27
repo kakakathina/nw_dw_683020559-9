@@ -1,9 +1,9 @@
 from pathlib import Path
 import duckdb
 
-DB_PATH = Path("data/nw_dw.duckdb")
-RAW_DIR = Path("data/raw")
-LEGACY_DIR = Path("data/legacy")
+DB_PATH = Path("scripts/northwind.duckdb")
+RAW_DIR = Path("raw_data/raw")
+LEGACY_DIR = Path("raw_data/legacy")
 
 
 def load_csvs_to_schema(con: duckdb.DuckDBPyConnection, folder: Path, schema: str) -> None:

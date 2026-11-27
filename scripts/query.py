@@ -1,29 +1,26 @@
-from pathlib import Path
 import sys
+from pathlib import Path
 import duckdb
 
-DB_PATH = Path("data/nw_dw.duckdb")
-
-DEFAULT_QUERY = """
-SELECT
-    table_schema,
-    table_name
-FROM information_schema.tables
-WHERE table_schema IN ('raw', 'legacy')
-ORDER BY table_schema, table_name;
-"""
+ROOT = Path(__file__).resolve().parent.parent
+DB_PATH = ROOT / "scripts" / "northwind.duckdb"
 
 
 def main() -> None:
-    if not DB_PATH.exists():
-        print(f"Database not found: {DB_PATH}. Run scripts/create_duckdb.py and scripts/load_raw.py first.")
+    if len(sys.argv) < 2:
+        print('Usage: python scripts/query.py "<SQL_QUERY>"')
         return
 
-    sql = " ".join(sys.argv[1:]).strip() or DEFAULT_QUERY
-    con = duckdb.connect(str(DB_PATH), read_only=True)
+    sql = sys.argv[1]
+    con = duckdb.connect(str(DB_PATH))
     try:
-        rel = con.sql(sql)
-        print(rel)
+        result = con.execute(sql).fetchall()
+        cols = [desc[0] for desc in con.description] if con.description else []
+        if cols:
+            print(" | ".join(cols))
+            print("-" * 50)
+        for row in result:
+            print(" | ".join(str(val) for val in row))
     finally:
         con.close()
 
